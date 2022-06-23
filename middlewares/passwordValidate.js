@@ -6,7 +6,7 @@ function middlewareValidatePassword(request, response, next) {
   if (password.length < 6) {
     return response.status(400).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
   } 
-  return next();
+  next();
 }
 
 module.exports = middlewareValidatePassword;
