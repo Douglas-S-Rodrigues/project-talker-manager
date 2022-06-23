@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs');
+const fs = require('fs').promises;
 const crypto = require('crypto');
 const middlewareValidateToken = require('./middlewares/tokenValidate');
 const middlewareValidateEmail = require('./middlewares/emailValidate');
@@ -49,8 +49,8 @@ middlewareValidateToken,
 middlewareValidateName,
 middlewareValidateAge,
 middlewareValidateTalk,
-middlewareValidateRate,
 middlewareValidateWatchedAt,
+middlewareValidateRate,
 async (request, response) => {
   try {
     const { name, age, talk } = request.body;
