@@ -24,7 +24,7 @@ app.get('/', (_request, response) => {
 
 app.get('/talker', async (_request, response) => { 
   try {
-    const talkers = await fs.readFile('talker.json', 'utf8');
+    const talkers = await fs.readFile('./talker.json', 'utf8');
     return response.status(200).json(await JSON.parse(talkers));
   } catch (error) {
     return response.status(200).json([]);
@@ -33,7 +33,7 @@ app.get('/talker', async (_request, response) => {
 
 app.get('/talker/:id', async (request, response) => {
     const id = Number(request.params.id);
-    const talkers = JSON.parse(await fs.readFile('talker.json', 'utf8'));
+    const talkers = JSON.parse(await fs.readFile('./talker.json', 'utf8'));
     const searchId = talkers.find((talkerId) => talkerId.id === id);
     if (searchId) return response.status(200).json(searchId);
     return response.status(404).json({ message: 'Pessoa palestrante não encontrada' });
@@ -45,18 +45,39 @@ app.post('/login', middlewareValidateEmail, middlewareValidatePassword, (_reques
 });
 
 app.post('/talker',
-middlewareValidateToken,
-middlewareValidateName,
-middlewareValidateAge,
-middlewareValidateTalk,
-middlewareValidateWatchedAt,
-middlewareValidateRate,
-async (request, response) => {
-  const { name, age, talk } = request.body;
-  const prevState = JSON.parse(await fs.readFile('talker.json', 'utf8'));
-  const newTalker = { id: prevState.length + 1, name, age, talk };
-  await fs.writeFile('talker.json', JSON.stringify([...prevState, newTalker]));
-  return response.status(201).json(newTalker);
+  middlewareValidateToken,
+  middlewareValidateName,
+  middlewareValidateAge,
+  middlewareValidateTalk,
+  middlewareValidateWatchedAt,
+  middlewareValidateRate,
+  async (request, response) => {
+    const { name, age, talk } = request.body;
+    const prevState = JSON.parse(await fs.readFile('talker.json', 'utf8'));
+    const newTalker = { id: prevState.length + 1, name, age, talk };
+    await fs.writeFile('talker.json', JSON.stringify([...prevState, newTalker]));
+    return response.status(201).json(newTalker);
+});
+
+app.put('/talker/:id',
+  middlewareValidateToken,
+  middlewareValidateName,
+  middlewareValidateAge,
+  middlewareValidateTalk,
+  middlewareValidateWatchedAt,
+  middlewareValidateRate,
+  async (request, response) => {
+    const { name, age, talk } = request.body;
+    const id = Number(request.params.id);
+    const prevState = JSON.parse(await fs.readFile('talker.json', 'utf8'));
+    const newTalker = prevState.map((talker) => {
+      if (talker.id === +id) {
+        return { id: +id, name, age, talk };
+      } 
+      return talker;
+    });
+    await fs.writeFile('talker.json', JSON.stringify(newTalker));
+    response.status(200).json({ id: +id, name, age, talk });
 });
 
 app.listen(PORT, () => {
