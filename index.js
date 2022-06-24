@@ -80,6 +80,14 @@ app.put('/talker/:id',
     response.status(200).json({ id: +id, name, age, talk });
 });
 
+app.delete('/talker/:id', middlewareValidateToken, async (request, response) => {
+  const id = Number(request.params.id);
+  const prevState = JSON.parse(await fs.readFile('talker.json', 'utf8'));
+  const talkers = prevState.find((talker) => talker.id === id);
+  await fs.writeFile('talker.json', JSON.stringify(talkers));
+  return response.status(204).json('');
+});
+
 app.listen(PORT, () => {
   console.log('Online');
 });
