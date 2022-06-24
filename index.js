@@ -53,9 +53,9 @@ app.post('/talker',
   middlewareValidateRate,
   async (request, response) => {
     const { name, age, talk } = request.body;
-    const prevState = JSON.parse(await fs.readFile('talker.json', 'utf8'));
+    const prevState = JSON.parse(await fs.readFile('./talker.json', 'utf8'));
     const newTalker = { id: prevState.length + 1, name, age, talk };
-    await fs.writeFile('talker.json', JSON.stringify([...prevState, newTalker]));
+    await fs.writeFile('./talker.json', JSON.stringify([...prevState, newTalker]));
     return response.status(201).json(newTalker);
 });
 
